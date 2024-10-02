@@ -23,7 +23,8 @@ public class ChatServer extends Server
     public void processMessage(String pClientIP, int pClientPort, String pMessage)
     {
         String[] splitMessages = pMessage.split(" ");
-        if (splitMessages.length >= 2) {
+        if (splitMessages.length >= 2)
+        {
             if (splitMessages[0].equalsIgnoreCase("USER"))
             {
                 User user = new User(splitMessages[1], pClientIP);
