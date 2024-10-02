@@ -77,7 +77,7 @@ public class ChatServer extends Server
                 send(pClientIP, pClientPort, "-ERR this command does not exist");
             }
         }
-        if (splitMessages.length == 1)
+        else if (splitMessages.length >= 1)
         {
             if (splitMessages[0].equalsIgnoreCase("USERLIST"))
             {
@@ -113,6 +113,10 @@ public class ChatServer extends Server
             {
                 send(pClientIP, pClientPort, "-ERR this command does not exist");
             }
+        }
+        else
+        {
+            send(pClientIP, pClientPort, "-ERR this command does not exist");
         }
     }
 
