@@ -8,7 +8,7 @@
 public class ChatServer extends Server
 {
     private BinarySearchTree<User> ips = new BinarySearchTree<>();
-    private List<User> namen = new List<>();
+    private BinarySearchTree<User> namen = new BinarySearchTree<>();
 
     public ChatServer()
     {
@@ -28,20 +28,11 @@ public class ChatServer extends Server
             if (splitMessages[0].equalsIgnoreCase("USER"))
             {
                 User user = new User(splitMessages[1], pClientIP);
-                boolean verfuegbar = true;
-                namen.toFirst();
-                while (namen.hasAccess())
-                {
-                    if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
-                    {
-                        verfuegbar = false;
-                    }
-                    namen.next();
-                }
-                if (verfuegbar)
+                User name = namen.search(user);
+                if (name == null)
                 {
                     ips.insert(user);
-                    namen.append(user);
+                    namen.insert(user);
                     send(pClientIP, pClientPort, "+OK User " + user.gibName() + " logged in");
                     broadcastAlle("ADDED " + user.gibName());
                 }
@@ -84,11 +75,13 @@ public class ChatServer extends Server
             if (splitMessages[0].equalsIgnoreCase("USERLIST"))
             {
                 send(pClientIP, pClientPort, "+OK Userlist");
-                namen.toFirst();
-                while (namen.hasAccess())
+                List<User> userlist = new List<>();
+                fuelleListe(userlist, namen);
+                userlist.toFirst();
+                while (userlist.hasAccess())
                 {
-                    send(pClientIP, pClientPort, namen.getContent().gibName());
-                    namen.next();
+                    send(pClientIP, pClientPort, userlist.getContent().gibName());
+                    userlist.next();
                 }
                 send(pClientIP, pClientPort, ".");
             }
@@ -99,15 +92,7 @@ public class ChatServer extends Server
                 if (user != null)
                 {
                     ips.remove(user);
-                    namen.toFirst();
-                    while (namen.hasAccess())
-                    {
-                        if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
-                        {
-                            namen.remove();
-                        }
-                        namen.next();
-                    }
+                    namen.remove(user);
                     broadcastAlle("QUIT " + user.gibName());
                 }
             }
@@ -128,15 +113,7 @@ public class ChatServer extends Server
         if (user != null)
         {
             ips.remove(user);
-            namen.toFirst();
-            while (namen.hasAccess())
-            {
-                if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
-                {
-                    namen.remove();
-                }
-                namen.next();
-            }
+            namen.remove(user);
             broadcastAlle("QUIT " + user.gibName());
         }
     }
@@ -144,5 +121,19 @@ public class ChatServer extends Server
     public void broadcastAlle(String pMessage)
     {
         sendToAll(pMessage);
+    }
+
+    public void fuelleListe(List<User> pListe, BinarySearchTree<User> pBaum)
+    {
+        if (pBaum == null)
+        {
+            return;
+        }
+        if (!pBaum.isEmpty())
+        {
+            pListe.append(pBaum.getContent());
+        }
+        fuelleListe(pListe, pBaum.getLeftTree());
+        fuelleListe(pListe, pBaum.getRightTree());
     }
 }
