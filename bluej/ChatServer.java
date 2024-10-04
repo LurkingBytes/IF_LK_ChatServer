@@ -7,8 +7,8 @@
  */
 public class ChatServer extends Server
 {
-    private BinarySearchTree<User> ips = new BinarySearchTree<>();
-    private BinarySearchTree<User> namen = new BinarySearchTree<>();
+    private BinarySearchTree<UserIP> ips = new BinarySearchTree<>();
+    private BinarySearchTree<UserName> namen = new BinarySearchTree<>();
 
     public ChatServer()
     {
@@ -28,11 +28,11 @@ public class ChatServer extends Server
             if (splitMessages[0].equalsIgnoreCase("USER"))
             {
                 User user = new User(splitMessages[1], pClientIP);
-                User name = namen.search(user);
+                User name = namen.search(gibUserName(user));
                 if (name == null)
                 {
-                    ips.insert(user);
-                    namen.insert(user);
+                    ips.insert(gibUserIP(user));
+                    namen.insert(gibUserName(user));
                     send(pClientIP, pClientPort, "+OK User " + user.gibName() + " logged in");
                     broadcastAlle("ADDED " + user.gibName());
                 }
@@ -48,7 +48,7 @@ public class ChatServer extends Server
                 {
                     nachricht += " " + splitMessages[i];
                 }
-                User user = ips.search(new User("", pClientIP));
+                User user = ips.search(new UserIP("", pClientIP));
                 if (user != null)
                 {
                     if (!nachricht.isBlank())
@@ -88,11 +88,11 @@ public class ChatServer extends Server
             else if (splitMessages[0].equalsIgnoreCase("QUIT"))
             {
                 send(pClientIP, pClientPort, "+OK bye");
-                User user = ips.search(new User("", pClientIP));
+                User user = ips.search(new UserIP("", pClientIP));
                 if (user != null)
                 {
-                    ips.remove(user);
-                    namen.remove(user);
+                    ips.remove(gibUserIP(user));
+                    namen.remove(gibUserName(user));
                     broadcastAlle("QUIT " + user.gibName());
                 }
             }
@@ -109,11 +109,11 @@ public class ChatServer extends Server
 
     public void processClosingConnection(String pClientIP, int pClientPort)
     {
-        User user = ips.search(new User("", pClientIP));
+        User user = ips.search(new UserIP("", pClientIP));
         if (user != null)
         {
-            ips.remove(user);
-            namen.remove(user);
+            ips.remove(gibUserIP(user));
+            namen.remove(gibUserName(user));
             broadcastAlle("QUIT " + user.gibName());
         }
     }
@@ -123,7 +123,7 @@ public class ChatServer extends Server
         sendToAll(pMessage);
     }
 
-    public void fuelleListe(List<User> pListe, BinarySearchTree<User> pBaum)
+    public void fuelleListe(List<User> pListe, BinarySearchTree<UserName> pBaum)
     {
         if (pBaum == null)
         {
@@ -135,5 +135,15 @@ public class ChatServer extends Server
         }
         fuelleListe(pListe, pBaum.getLeftTree());
         fuelleListe(pListe, pBaum.getRightTree());
+    }
+
+    public UserIP gibUserIP(User pUser)
+    {
+        return new UserIP(pUser.gibName(), pUser.gibIP());
+    }
+
+    public UserName gibUserName(User pUser)
+    {
+        return new UserName(pUser.gibName(), pUser.gibIP());
     }
 }
