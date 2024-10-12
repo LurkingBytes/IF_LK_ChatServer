@@ -20,7 +20,7 @@ public class User implements ComparableContent<User>
 
     public boolean isGreater(User pContent)
     {
-        return gibHost().compareTo(pContent.gibHost()) < 0;
+        return gibHost().compareTo(pContent.gibHost()) > 0;
     }
 
     public boolean isEqual(User pContent)
@@ -30,7 +30,7 @@ public class User implements ComparableContent<User>
 
     public boolean isLess(User pContent)
     {
-        return gibHost().compareTo(pContent.gibHost()) > 0;
+        return gibHost().compareTo(pContent.gibHost()) < 0;
     }
     
     private String gibHost()
