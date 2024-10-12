@@ -9,26 +9,33 @@ public class User implements ComparableContent<User>
 {
     private String name;
     private String ip;
+    private int port;
 
-    public User(String pName, String pIP)
+    public User(String pName, String pIP, int pPort)
     {
         name = pName;
         ip = pIP;
+        port = pPort;
     }
 
     public boolean isGreater(User pContent)
     {
-        return ip.compareTo(pContent.gibIP()) < 0;
+        return gibHost().compareTo(pContent.gibHost()) < 0;
     }
 
     public boolean isEqual(User pContent)
     {
-        return ip.compareTo(pContent.gibIP()) == 0;
+        return gibHost().compareTo(pContent.gibHost()) == 0;
     }
 
     public boolean isLess(User pContent)
     {
-        return ip.compareTo(pContent.gibIP()) > 0;
+        return gibHost().compareTo(pContent.gibHost()) > 0;
+    }
+    
+    private String gibHost()
+    {
+        return ip + ":" + port;
     }
 
     public String gibName()
@@ -39,5 +46,10 @@ public class User implements ComparableContent<User>
     public String gibIP()
     {
         return ip;
+    }
+    
+    public int gibPort()
+    {
+        return port;
     }
 }

@@ -27,7 +27,7 @@ public class ChatServer extends Server
         {
             if (splitMessages[0].equalsIgnoreCase("USER"))
             {
-                User user = new User(splitMessages[1], pClientIP);
+                User user = new User(splitMessages[1], pClientIP, pClientPort);
                 boolean verfuegbar = true;
                 namen.toFirst();
                 while (namen.hasAccess())
@@ -49,14 +49,15 @@ public class ChatServer extends Server
                 {
                     send(pClientIP, pClientPort, "-ERR this username has already been taken");
                 }
-            } else if (splitMessages[0].equalsIgnoreCase("SEND"))
+            }
+            else if (splitMessages[0].equalsIgnoreCase("SEND"))
             {
                 String nachricht = "";
                 for (int i = 1; i < splitMessages.length; i++)
                 {
                     nachricht += " " + splitMessages[i];
                 }
-                User user = ips.search(new User("", pClientIP));
+                User user = ips.search(new User("", pClientIP, pClientPort));
                 if (user != null)
                 {
                     if (!nachricht.isBlank())
@@ -95,7 +96,7 @@ public class ChatServer extends Server
             else if (splitMessages[0].equalsIgnoreCase("QUIT"))
             {
                 send(pClientIP, pClientPort, "+OK bye");
-                User user = ips.search(new User("", pClientIP));
+                User user = ips.search(new User("", pClientIP, pClientPort));
                 if (user != null)
                 {
                     ips.remove(user);
@@ -124,7 +125,7 @@ public class ChatServer extends Server
 
     public void processClosingConnection(String pClientIP, int pClientPort)
     {
-        User user = ips.search(new User("", pClientIP));
+        User user = ips.search(new User("", pClientIP, pClientPort));
         if (user != null)
         {
             ips.remove(user);

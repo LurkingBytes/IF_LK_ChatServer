@@ -16,4 +16,3 @@ BENUTZERHINWEISE:
 - Alle verbundenen Clients können "MESSAGE" Nachrichten sehen
 - Alle verbundenen Clients können "ADDED" und "QUIT" Nachrichten sehen
 - Alle verbundenen Clients können den Befehl "USERLIST" ausführen
-- Clients mit der selben IP können nicht auseinandergehalten werden (Port müsste auch beachtet werden)
