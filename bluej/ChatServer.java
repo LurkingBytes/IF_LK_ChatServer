@@ -27,7 +27,7 @@ public class ChatServer extends Server
         {
             if (splitMessages[0].equalsIgnoreCase("USER"))
             {
-                User user = new User(splitMessages[1], pClientIP);
+                User user = new User(splitMessages[1], pClientIP, pClientPort);
                 User name = namen.search(gibUserName(user));
                 if (name == null)
                 {
@@ -48,12 +48,13 @@ public class ChatServer extends Server
                 {
                     nachricht += " " + splitMessages[i];
                 }
-                User user = ips.search(new UserIP("", pClientIP));
+                User user = ips.search(new UserIP("", pClientIP, pClientPort));
                 if (user != null)
                 {
                     if (!nachricht.isBlank())
                     {
                         broadcastAlle("MESSAGE " + user.gibName() + nachricht);
+                        send(pClientIP, pClientPort, "+OK message has been send");
                     }
                     else
                     {
@@ -88,7 +89,7 @@ public class ChatServer extends Server
             else if (splitMessages[0].equalsIgnoreCase("QUIT"))
             {
                 send(pClientIP, pClientPort, "+OK bye");
-                User user = ips.search(new UserIP("", pClientIP));
+                User user = ips.search(new UserIP("", pClientIP, pClientPort));
                 if (user != null)
                 {
                     ips.remove(gibUserIP(user));
@@ -109,7 +110,7 @@ public class ChatServer extends Server
 
     public void processClosingConnection(String pClientIP, int pClientPort)
     {
-        User user = ips.search(new UserIP("", pClientIP));
+        User user = ips.search(new UserIP("", pClientIP, pClientPort));
         if (user != null)
         {
             ips.remove(gibUserIP(user));
@@ -129,21 +130,21 @@ public class ChatServer extends Server
         {
             return;
         }
+        fuelleListe(pListe, pBaum.getLeftTree());
         if (!pBaum.isEmpty())
         {
             pListe.append(pBaum.getContent());
         }
-        fuelleListe(pListe, pBaum.getLeftTree());
         fuelleListe(pListe, pBaum.getRightTree());
     }
 
     public UserIP gibUserIP(User pUser)
     {
-        return new UserIP(pUser.gibName(), pUser.gibIP());
+        return new UserIP(pUser.gibName(), pUser.gibIP(), pUser.gibPort());
     }
 
     public UserName gibUserName(User pUser)
     {
-        return new UserName(pUser.gibName(), pUser.gibIP());
+        return new UserName(pUser.gibName(), pUser.gibIP(), pUser.gibPort());
     }
 }

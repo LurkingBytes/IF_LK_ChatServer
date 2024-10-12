@@ -7,23 +7,23 @@
  */
 public class UserIP extends User implements ComparableContent<UserIP>
 {
-    public UserIP(String pName, String pIP)
+    public UserIP(String pName, String pIP, int pPort)
     {
-        super(pName, pIP);
+        super(pName, pIP, pPort);
     }
 
     public boolean isGreater(UserIP pContent)
     {
-        return ip.compareTo(pContent.gibIP()) < 0;
+        return gibHost().compareTo(pContent.gibHost()) > 0;
     }
 
     public boolean isEqual(UserIP pContent)
     {
-        return ip.compareTo(pContent.gibIP()) == 0;
+        return gibHost().compareTo(pContent.gibHost()) == 0;
     }
 
     public boolean isLess(UserIP pContent)
     {
-        return ip.compareTo(pContent.gibIP()) > 0;
+        return gibHost().compareTo(pContent.gibHost()) < 0;
     }
 }

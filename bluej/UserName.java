@@ -7,14 +7,14 @@
  */
 public class UserName extends User implements ComparableContent<UserName>
 {
-    public UserName(String pName, String pIP)
+    public UserName(String pName, String pIP, int pPort)
     {
-        super(pName, pIP);
+        super(pName, pIP, pPort);
     }
 
     public boolean isGreater(UserName pContent)
     {
-        return name.compareTo(pContent.gibName()) < 0;
+        return name.compareTo(pContent.gibName()) > 0;
     }
 
     public boolean isEqual(UserName pContent)
@@ -24,6 +24,6 @@ public class UserName extends User implements ComparableContent<UserName>
 
     public boolean isLess(UserName pContent)
     {
-        return name.compareTo(pContent.gibName()) > 0;
+        return name.compareTo(pContent.gibName()) < 0;
     }
 }

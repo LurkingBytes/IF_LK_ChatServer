@@ -9,13 +9,20 @@ public class User
 {
     protected String name;
     protected String ip;
+    protected int port;
 
-    public User(String pName, String pIP)
+    public User(String pName, String pIP, int pPort)
     {
         name = pName;
         ip = pIP;
+        port = pPort;
     }
 
+    public String gibHost()
+    {
+        return ip + ":" + port;
+    }
+    
     public String gibName()
     {
         return name;
@@ -24,5 +31,10 @@ public class User
     public String gibIP()
     {
         return ip;
+    }
+    
+    public int gibPort()
+    {
+        return port;
     }
 }
