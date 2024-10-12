@@ -49,8 +49,7 @@ public class ChatServer extends Server
                 {
                     send(pClientIP, pClientPort, "-ERR this username has already been taken");
                 }
-            }
-            else if (splitMessages[0].equalsIgnoreCase("SEND"))
+            } else if (splitMessages[0].equalsIgnoreCase("SEND"))
             {
                 String nachricht = "";
                 for (int i = 1; i < splitMessages.length; i++)
@@ -63,6 +62,7 @@ public class ChatServer extends Server
                     if (!nachricht.isBlank())
                     {
                         broadcastAlle("MESSAGE " + user.gibName() + nachricht);
+                        send(pClientIP, pClientPort, "+OK message has been send");
                     }
                     else
                     {
