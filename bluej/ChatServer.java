@@ -7,8 +7,7 @@
  */
 public class ChatServer extends Server
 {
-    private BinarySearchTree<User> ips = new BinarySearchTree<>();
-    private List<User> namen = new List<>();
+    private List<User> users = new List<>();
 
     public ChatServer()
     {
@@ -29,19 +28,18 @@ public class ChatServer extends Server
             {
                 User user = new User(splitMessages[1], pClientIP, pClientPort);
                 boolean verfuegbar = true;
-                namen.toFirst();
-                while (namen.hasAccess())
+                users.toFirst();
+                while (users.hasAccess())
                 {
-                    if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
+                    if (users.getContent().gibName().equalsIgnoreCase(user.gibName()))
                     {
                         verfuegbar = false;
                     }
-                    namen.next();
+                    users.next();
                 }
                 if (verfuegbar)
                 {
-                    ips.insert(user);
-                    namen.append(user);
+                    users.append(user);
                     send(pClientIP, pClientPort, "+OK User " + user.gibName() + " logged in");
                     broadcastAlle("ADDED " + user.gibName());
                 }
@@ -57,7 +55,7 @@ public class ChatServer extends Server
                 {
                     nachricht += " " + splitMessages[i];
                 }
-                User user = ips.search(new User("", pClientIP, pClientPort));
+                User user = gibUser(pClientIP, pClientPort);
                 if (user != null)
                 {
                     if (!nachricht.isBlank())
@@ -85,31 +83,27 @@ public class ChatServer extends Server
             if (splitMessages[0].equalsIgnoreCase("USERLIST"))
             {
                 send(pClientIP, pClientPort, "+OK Userlist");
-                namen.toFirst();
-                while (namen.hasAccess())
+                users.toFirst();
+                while (users.hasAccess())
                 {
-                    send(pClientIP, pClientPort, namen.getContent().gibName());
-                    namen.next();
+                    send(pClientIP, pClientPort, users.getContent().gibName());
+                    users.next();
                 }
                 send(pClientIP, pClientPort, ".");
             }
             else if (splitMessages[0].equalsIgnoreCase("QUIT"))
             {
                 send(pClientIP, pClientPort, "+OK bye");
-                User user = ips.search(new User("", pClientIP, pClientPort));
-                if (user != null)
+                users.toFirst();
+                while (users.hasAccess())
                 {
-                    ips.remove(user);
-                    namen.toFirst();
-                    while (namen.hasAccess())
+                    User user = users.getContent();
+                    if (user.gibIP().equalsIgnoreCase(pClientIP) && user.gibPort() == pClientPort)
                     {
-                        if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
-                        {
-                            namen.remove();
-                        }
-                        namen.next();
+                        users.remove();
+                        broadcastAlle("QUIT " + user.gibName());
                     }
-                    broadcastAlle("QUIT " + user.gibName());
+                    users.next();
                 }
             }
             else
@@ -125,25 +119,36 @@ public class ChatServer extends Server
 
     public void processClosingConnection(String pClientIP, int pClientPort)
     {
-        User user = ips.search(new User("", pClientIP, pClientPort));
-        if (user != null)
+        users.toFirst();
+        while (users.hasAccess())
         {
-            ips.remove(user);
-            namen.toFirst();
-            while (namen.hasAccess())
+            User user = users.getContent();
+            if (user.gibIP().equalsIgnoreCase(pClientIP) && user.gibPort() == pClientPort)
             {
-                if (namen.getContent().gibName().equalsIgnoreCase(user.gibName()))
-                {
-                    namen.remove();
-                }
-                namen.next();
+                users.remove();
+                broadcastAlle("QUIT " + user.gibName());
             }
-            broadcastAlle("QUIT " + user.gibName());
+            users.next();
         }
     }
 
     public void broadcastAlle(String pMessage)
     {
         sendToAll(pMessage);
+    }
+
+    public User gibUser(String pClientIP, int pClientPort)
+    {
+        users.toFirst();
+        while (users.hasAccess())
+        {
+            User user = users.getContent();
+            if (user.gibIP().equalsIgnoreCase(pClientIP) && user.gibPort() == pClientPort)
+            {
+                return user;
+            }
+            users.next();
+        }
+        return null;
     }
 }
